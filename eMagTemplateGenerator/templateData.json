@@ -1,0 +1,28 @@
+﻿{
+  "name": "name",
+  "companyBanner": "bannerUrl",
+  "descriptions": [
+    {
+      "title": "title",
+      "text": "text",
+      "imageUrl": "imageUrl"
+    },
+    {
+      "title": "title",
+      "text": "text",
+      "imageUrl": "imageUrl"
+    }
+  ],
+  "specification": {
+    "title": "title",
+    "text": "text"
+  },
+  "videos": [
+    {
+      "title": "title",
+      "description": "description",
+      "url": "videoUrl"
+    }
+  ],
+  "arrangementPhoto": "photoUrl"
+}
