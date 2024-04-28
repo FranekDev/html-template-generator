@@ -20,7 +20,7 @@ public class TemplateService
     public ProductListing? DeserializeJsonData(string jsonData)
     {
         ProductListing = JsonConvert.DeserializeObject<ProductListing>(jsonData);
-        if (ProductListing is not null)
+        if (ProductListing?.Specification.Text != null)
         {
             ProductListing.Specification.Items =
                 ProductListing.Specification.GenerateSpecificationItems(ProductListing.Specification.Text);
