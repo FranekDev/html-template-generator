@@ -100,7 +100,8 @@ public class TemplateService
         
         if (productListing is null)
         {
-            throw new Exception("Failed to deserialize JSON data.");
+            _logger.LogError("Failed to deserialize JSON data.");
+            return;
         }
         
         _logger.LogInformation("Generating template file...");

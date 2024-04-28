@@ -11,4 +11,14 @@ public class LoggerService
             Console.ReadLine();
         }
     }
+    
+    public void LogError(string message, bool addReadLine = false)
+    {
+        Console.WriteLine($"Error: {message}");
+        
+        if (addReadLine)
+        {
+            Console.ReadLine();
+        }
+    }
 }
