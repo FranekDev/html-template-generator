@@ -109,6 +109,6 @@ public class TemplateService
         var htmlPage = GenerateHtml(productListing);
         
         await SaveHtmlFileToDirectory(productListing.Name, htmlPage);
-        _logger.LogInformation($"Template file for {productListing.Name} generated successfully.");
+        _logger.LogSuccess($"Template file for {productListing.Name} generated successfully.");
     }
 }

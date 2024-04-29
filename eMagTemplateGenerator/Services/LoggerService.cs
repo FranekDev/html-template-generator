@@ -1,10 +1,12 @@
-﻿namespace eMagTemplateGenerator.Services;
+﻿using Spectre.Console;
+
+namespace eMagTemplateGenerator.Services;
 
 public class LoggerService
 {
     public void LogInformation(string message, bool addReadLine = false)
     {
-        Console.WriteLine(message);
+        AnsiConsole.MarkupLine($"[lightgoldenrod2_1 italic]Info:[/] {message}");
         
         if (addReadLine)
         {
@@ -14,7 +16,17 @@ public class LoggerService
     
     public void LogError(string message, bool addReadLine = false)
     {
-        Console.WriteLine($"Error: {message}");
+        AnsiConsole.MarkupLine($"[indianred1 italic]Error:[/] {message}");
+        
+        if (addReadLine)
+        {
+            Console.ReadLine();
+        }
+    }
+    
+    public void LogSuccess(string message, bool addReadLine = false)
+    {
+        AnsiConsole.MarkupLine($"[darkolivegreen3_1 italic]Success:[/] {message}");
         
         if (addReadLine)
         {
