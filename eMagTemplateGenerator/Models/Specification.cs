@@ -1,12 +1,10 @@
-﻿using Newtonsoft.Json;
-
-namespace eMagTemplateGenerator.Models;
+﻿namespace eMagTemplateGenerator.Models;
 
 public record Specification
 {
     public string Title { get; init; }
-    public string? Text { get; set; } = null;
-    public IEnumerable<SpecificationItem> Items { get; set; }
+    public string? Text { get; set; }
+    public IEnumerable<SpecificationItem> Items { get; set; } = [];
 
     public IEnumerable<SpecificationItem> GenerateSpecificationItems(string text)
     {

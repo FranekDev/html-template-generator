@@ -1,35 +1,30 @@
 ﻿using eMagTemplateGenerator.Html;
 using eMagTemplateGenerator.Models;
 using eMagTemplateGenerator.Static;
-using Newtonsoft.Json;
 
 namespace eMagTemplateGenerator.Services;
 
 public class TemplateService
 {
-    private string _jsonData = "";
-    public ProductListing? ProductListing { get; private set; }
-    private readonly FileManagerService _fileManagerService = new();
+    private ProductListing? _productListing;
+    private readonly FileManagerService _fileManager = new();
     private readonly LoggerService _logger = new();
     
-    public async Task ReadJsonData(string fileName)
+    private ProductListing? DeserializeYamlData(string data)
     {
-        _jsonData = await File.ReadAllTextAsync(fileName);
-    }
-    
-    public ProductListing? DeserializeJsonData(string jsonData)
-    {
-        ProductListing = JsonConvert.DeserializeObject<ProductListing>(jsonData);
-        if (ProductListing?.Specification.Text != null)
+        _productListing = _fileManager.DeserializeYamlFile<ProductListing>(data);
+
+        if (_productListing?.Specification?.Text != null)
         {
-            ProductListing.Specification.Items =
-                ProductListing.Specification.GenerateSpecificationItems(ProductListing.Specification.Text);
+            _productListing.Specification.Items =
+                _productListing.Specification.GenerateSpecificationItems(_productListing.Specification.Text);
         }
 
-        return ProductListing;
+        return _productListing;
     }
     
-    public string GenerateHtml(ProductListing productListing)
+
+    private string GenerateHtml(ProductListing productListing)
     {
         var html = new HtmlBuilder();
 
@@ -63,10 +58,10 @@ public class TemplateService
             _logger.LogInformation("No videos found.");
         }
 
-        if (productListing.Specification.Items.Any())
+        if (productListing.Specification != null && productListing.Specification.Items.Any())
         {
             html = html
-                .H2(productListing.Specification.Title)
+                .H2($"{productListing.Specification.Title}:")
                 .UlWithLi(productListing.Specification.Items.MapToDict());
         }
         else
@@ -87,20 +82,26 @@ public class TemplateService
         return html.ResultHtml;
     }
 
-    public async Task SaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName = "Szablony")
+    private async Task SaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName = "Szablony")
     {
-        await _fileManagerService.WriteAndSaveHtmlFileToDirectory(fileName, htmlPage, directoryName);
+        await _fileManager.WriteAndSaveHtmlFileToDirectory(fileName, htmlPage, directoryName);
     }
     
-    public async Task GenerateHtmlTemplateFile(string jsonFileName)
+    public async Task GenerateHtmlTemplateFile(string fileName)
     {
-        await ReadJsonData(jsonFileName);
+        var data = await _fileManager.ReadFile(fileName);
         
-        var productListing = DeserializeJsonData(_jsonData);
+        if (string.IsNullOrEmpty(data))
+        {
+            _logger.LogError("Failed to read Yaml file.");
+            return;
+        }
+        
+        var productListing = DeserializeYamlData(data);
         
         if (productListing is null)
         {
-            _logger.LogError("Failed to deserialize JSON data.");
+            _logger.LogError("Failed to deserialize Yaml data.");
             return;
         }
         

@@ -11,13 +11,13 @@
       <None Update="SzabloEmagRO.html">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="templateData.json">
+      <None Update="templateData.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="YamlDotNet" Version="15.1.2" />
     </ItemGroup>
 
 </Project>
