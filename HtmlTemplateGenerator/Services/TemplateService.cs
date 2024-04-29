@@ -1,8 +1,8 @@
-﻿using eMagTemplateGenerator.Html;
-using eMagTemplateGenerator.Models;
-using eMagTemplateGenerator.Static;
+﻿using HtmlTemplateGenerator.Html;
+using HtmlTemplateGenerator.Models;
+using HtmlTemplateGenerator.Static;
 
-namespace eMagTemplateGenerator.Services;
+namespace HtmlTemplateGenerator.Services;
 
 public class TemplateService
 {
@@ -82,7 +82,7 @@ public class TemplateService
         return html.ResultHtml;
     }
 
-    private async Task SaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName = "Szablony")
+    private async Task SaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName = "Templates")
     {
         await _fileManager.WriteAndSaveHtmlFileToDirectory(fileName, htmlPage, directoryName);
     }

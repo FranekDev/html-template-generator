@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using eMagTemplateGenerator.Models;
+using HtmlTemplateGenerator.Models;
 
-namespace eMagTemplateGenerator.Html;
+namespace HtmlTemplateGenerator.Html;
 
 public class HtmlBuilder
 {

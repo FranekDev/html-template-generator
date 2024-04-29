@@ -1,4 +1,4 @@
-﻿namespace eMagTemplateGenerator.Html;
+﻿namespace HtmlTemplateGenerator.Html;
 
 public static class HtmlTag
 {

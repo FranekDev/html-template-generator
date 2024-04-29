@@ -1,4 +1,4 @@
-﻿namespace eMagTemplateGenerator.Models;
+﻿namespace HtmlTemplateGenerator.Models;
 
 public record Specification
 {

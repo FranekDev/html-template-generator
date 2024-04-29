@@ -1,4 +1,4 @@
-﻿using eMagTemplateGenerator.Services;
+﻿using HtmlTemplateGenerator.Services;
 
 var service = new TemplateService();
 var logger = new LoggerService();

@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
 
-namespace eMagTemplateGenerator.Services;
+namespace HtmlTemplateGenerator.Services;
 
 public class LoggerService
 {

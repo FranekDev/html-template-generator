@@ -1,6 +1,6 @@
-﻿using eMagTemplateGenerator.Models;
+﻿using HtmlTemplateGenerator.Models;
 
-namespace eMagTemplateGenerator.Static;
+namespace HtmlTemplateGenerator.Static;
 
 public static class SpecificationMapping
 {
