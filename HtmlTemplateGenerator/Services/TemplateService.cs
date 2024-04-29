@@ -1,85 +1,24 @@
-﻿using HtmlTemplateGenerator.Html;
-using HtmlTemplateGenerator.Models;
-using HtmlTemplateGenerator.Static;
+﻿using HtmlTemplateGenerator.Models;
 
 namespace HtmlTemplateGenerator.Services;
 
 public class TemplateService
 {
-    private ProductListing? _productListing;
     private readonly FileManagerService _fileManager = new();
     private readonly LoggerService _logger = new();
+    private readonly TemplateBuilder _templateBuilder = new();
     
-    private ProductListing? DeserializeYamlData(string data)
+    private ProductListing? GetProductListing(string data)
     {
-        _productListing = _fileManager.DeserializeYamlFile<ProductListing>(data);
+        var productListing = _fileManager.DeserializeYamlFile<ProductListing>(data);
 
-        if (_productListing?.Specification?.Text != null)
+        if (productListing?.Specification?.Text != null)
         {
-            _productListing.Specification.Items =
-                _productListing.Specification.GenerateSpecificationItems(_productListing.Specification.Text);
+            productListing.Specification.Items =
+                productListing.Specification.GenerateSpecificationItems(productListing.Specification.Text);
         }
 
-        return _productListing;
-    }
-    
-
-    private string GenerateHtml(ProductListing productListing)
-    {
-        var html = new HtmlBuilder();
-
-        html = html
-            .TableOpen()
-            .TableBodyOpen()
-            .TableRowOpen()
-            .TableCellOpen(2)
-            .Img(productListing.CompanyBanner)
-            .TableCellClose()
-            .TableRowClose()
-            .TableRowOpen()
-            .TableCellOpen(2)
-            .H2("")
-            .TableCellClose()
-            .TableRowClose()
-            .TrItems(productListing.Descriptions)
-            .TableBodyClose()
-            .TableClose();
-
-        if (productListing.Videos.Any())
-        {
-            html = productListing.Videos.Aggregate(html, (current, video) => current
-                .H2(video.Title)
-                .P(video.Description)
-                .P(HtmlTag.Video(video.Url))
-            );
-        }
-        else
-        {
-            _logger.LogInformation("No videos found.");
-        }
-
-        if (productListing.Specification != null && productListing.Specification.Items.Any())
-        {
-            html = html
-                .H2($"{productListing.Specification.Title}:")
-                .UlWithLi(productListing.Specification.Items.MapToDict());
-        }
-        else
-        {
-            _logger.LogInformation("No specification items found.");
-        }
-        
-        if (productListing.ArrangementPhoto != null)
-        {
-            html = html
-                .H2(HtmlTag.Img(productListing.ArrangementPhoto));
-        }
-        else
-        {
-            _logger.LogInformation("No arrangement photo found.");
-        }
-
-        return html.ResultHtml;
+        return productListing;
     }
 
     private async Task SaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName = "Templates")
@@ -97,7 +36,7 @@ public class TemplateService
             return;
         }
         
-        var productListing = DeserializeYamlData(data);
+        var productListing = GetProductListing(data);
         
         if (productListing is null)
         {
@@ -105,10 +44,35 @@ public class TemplateService
             return;
         }
         
-        _logger.LogInformation("Generating template file...");
-        var htmlPage = GenerateHtml(productListing);
+        var shouldRenderSpecification = productListing.Specification is not null && productListing.Specification.Items.Any();
+        var shouldRenderVideos = productListing.Videos.Any();
+        var shouldRenderArrangementPhoto = productListing.ArrangementPhoto is not null;
         
-        await SaveHtmlFileToDirectory(productListing.Name, htmlPage);
+        _logger.LogInformation("Generating template file...");
+        
+        if (!shouldRenderSpecification)
+        {
+            _logger.LogInformation("No specification items found.");
+        }
+        
+        if (!shouldRenderVideos)
+        {
+            _logger.LogInformation("No videos found.");
+        }
+        
+        if (!shouldRenderArrangementPhoto)
+        {
+            _logger.LogInformation("No arrangement photo found.");
+        }
+        
+        var htmlTemplate = _templateBuilder.GenerateHtmlTemplate(
+            productListing, 
+            shouldRenderSpecification, 
+            shouldRenderVideos, 
+            shouldRenderArrangementPhoto
+        );
+        
+        await SaveHtmlFileToDirectory(productListing.Name, htmlTemplate);
         _logger.LogSuccess($"Template file for {productListing.Name} generated successfully.");
     }
 }

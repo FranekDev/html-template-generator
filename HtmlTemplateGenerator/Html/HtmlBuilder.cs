@@ -115,46 +115,14 @@ public class HtmlBuilder
 		return this;
 	}
 	
-	public HtmlBuilder UlWithLi(Dictionary<string, string> items)
+	public HtmlBuilder UlWithLi(Dictionary<string, string> items, Func<KeyValuePair<string, string>, string> itemTemplate)
 	{
 		UlOpen();
 		foreach (var item in items)
 		{
-			Li($"{HtmlTag.Strong($"{item.Key}:")} {item.Value}");
+			Li(itemTemplate(item));
 		}
 		UlClose();
-		return this;
-	}
-	
-	public HtmlBuilder TrItems(IEnumerable<Description> items)
-	{
-		var isEvenLoop = true;
-		foreach (var item in items)
-		{
-			TableRowOpen();
-			if (isEvenLoop)
-			{
-				TableCellOpen();
-				H2(item.Title);
-				P(item.Text);
-				TableCellClose();
-				TableCellOpen();
-				H3(HtmlTag.Img(item.ImageUrl));
-				TableCellClose();
-			}
-			else
-			{
-				TableCellOpen();
-				H3(HtmlTag.Img(item.ImageUrl));
-				TableCellClose();
-				TableCellOpen();
-				H2(item.Title);
-				P(item.Text);
-				TableCellClose();
-			}
-			isEvenLoop = !isEvenLoop;
-			TableRowClose();
-		}
 		return this;
 	}
 }
