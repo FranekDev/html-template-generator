@@ -17,7 +17,7 @@ public class TemplateBuilder
         var html = new TemplateHtmlBuilder()
             .TableBody(table =>
                 {
-                    if (shouldRenderBannerImage)
+                    if (shouldRenderBannerImage && item.BannerImageSrc is not null)
                     {
                         table.RenderBannerImage(item.BannerImageSrc);
                     }
