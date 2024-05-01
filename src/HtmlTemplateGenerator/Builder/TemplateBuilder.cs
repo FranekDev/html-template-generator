@@ -7,32 +7,26 @@ namespace HtmlTemplateGenerator.Builder;
 public class TemplateBuilder
 {
     public string GenerateHtmlTemplate(
-        ProductListing productListing,
+        Item item,
         bool shouldRenderSpecification,
-        bool shouldRenderVideos,
-        bool shouldRenderArrangementPhoto
+        bool shouldRenderVideos
     )
     {
         var html = new TemplateHtmlBuilder()
             .TableBody(table =>
-                table.RenderCompanyBanner(productListing.CompanyBanner)
+                table.RenderBannerImage(item.BannerImageSrc)
                     .RenderHeader("")
-                    .RenderDescriptions(productListing.Descriptions)
+                    .RenderDescriptions(item.Descriptions)
             );
 
         if (shouldRenderVideos)
         {
-            html.RenderVideos(productListing.Videos);
+            html.RenderVideos(item.Videos);
         }
 
-        if (shouldRenderSpecification && productListing.Specification is not null)
+        if (shouldRenderSpecification && item.Specification is not null)
         {
-            html.RenderSpecification(productListing.Specification);
-        }
-
-        if (shouldRenderArrangementPhoto && productListing.ArrangementPhoto is not null)
-        {
-            html.RenderArrangementPhoto(productListing.ArrangementPhoto);
+            html.RenderSpecification(item.Specification);
         }
 
         return html.ResultHtml;
@@ -50,7 +44,7 @@ public class TemplateBuilder
             return this;
         }
 
-        public TemplateHtmlBuilder RenderCompanyBanner(string bannerUrl, int columnSpan = 2)
+        public TemplateHtmlBuilder RenderBannerImage(string bannerUrl, int columnSpan = 2)
         {
             TableRowOpen();
             TableCellOpen(columnSpan);
@@ -72,49 +66,24 @@ public class TemplateBuilder
 
         public TemplateHtmlBuilder RenderDescriptions(IEnumerable<Description> items)
         {
-            var shouldRenderTextFirst = true;
-
             foreach (var item in items)
             {
                 TableRowOpen();
-                RenderDescription(item, shouldRenderTextFirst);
+                RenderDescription(item);
                 TableRowClose();
-                shouldRenderTextFirst = !shouldRenderTextFirst;
             }
 
             return this;
         }
 
-        private void RenderDescription(Description description, bool renderTextFirst)
-        {
-            if (renderTextFirst)
-            {
-                RenderCellWithText(description.Title, description.Text);
-                RenderCellWithImage(description.ImageUrl);
-            }
-            else
-            {
-                RenderCellWithImage(description.ImageUrl);
-                RenderCellWithText(description.Title, description.Text);
-            }
-        }
-
-        private void RenderCellWithImage(string imageUrl)
+        private void RenderDescription(Description description)
         {
             TableCellOpen();
-            H3(
-                HtmlTag.Img(imageUrl)
-            );
+            H2(description.Title);
+            P(description.Text);
             TableCellClose();
         }
-
-        private void RenderCellWithText(string title, string text)
-        {
-            TableCellOpen();
-            H2(title);
-            P(text);
-            TableCellClose();
-        }
+        
 
         public void RenderVideos(IEnumerable<Video> videos)
         {
@@ -132,11 +101,6 @@ public class TemplateBuilder
             UlWithLi(specification.Items.MapToDict(), item =>
                 $"{HtmlTag.Strong($"{item.Key}:")} {item.Value}"
             );
-        }
-
-        public void RenderArrangementPhoto(string imageUrl)
-        {
-            H2(HtmlTag.Img(imageUrl));
         }
     }
 }

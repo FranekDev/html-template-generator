@@ -1,12 +1,11 @@
-﻿name: name
-
-companyBanner: bannerUrl
+﻿name: CV
 
 descriptions:
   - title: title
     text: text
-    imageUrl: imageUrl
-
+  - title: title
+    text: text
+    
 specification:
   title: title
   text: |
@@ -17,5 +16,3 @@ videos:
   - title: title
     description: description
     url: videoUrl
-
-arrangementPhoto: photoUrl

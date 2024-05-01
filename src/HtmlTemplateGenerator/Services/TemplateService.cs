@@ -9,17 +9,17 @@ public class TemplateService
     private readonly LoggerService _logger = new();
     private readonly TemplateBuilder _templateBuilder = new();
     
-    private ProductListing? GetProductListing(string data)
+    private Item? GetItem(string data)
     {
-        var productListing = _fileManager.DeserializeYamlFile<ProductListing>(data);
+        var item = _fileManager.DeserializeYamlFile<Item>(data);
 
-        if (productListing?.Specification?.Text != null)
+        if (item?.Specification?.Text != null)
         {
-            productListing.Specification.Items =
-                productListing.Specification.GenerateSpecificationItems(productListing.Specification.Text);
+            item.Specification.Items =
+                item.Specification.GenerateSpecificationItems(item.Specification.Text);
         }
 
-        return productListing;
+        return item;
     }
 
     private async Task SaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName = "Templates")
@@ -37,17 +37,16 @@ public class TemplateService
             return;
         }
         
-        var productListing = GetProductListing(data);
+        var item = GetItem(data);
         
-        if (productListing is null)
+        if (item is null)
         {
             _logger.LogError("Failed to deserialize Yaml data.");
             return;
         }
         
-        var shouldRenderSpecification = productListing.Specification is not null && productListing.Specification.Items.Any();
-        var shouldRenderVideos = productListing.Videos.Any();
-        var shouldRenderArrangementPhoto = productListing.ArrangementPhoto is not null;
+        var shouldRenderSpecification = item.Specification is not null && item.Specification.Items.Any();
+        var shouldRenderVideos = item.Videos.Any();
         
         _logger.LogInformation("Generating template file...");
         
@@ -61,19 +60,13 @@ public class TemplateService
             _logger.LogInformation("No videos found.");
         }
         
-        if (!shouldRenderArrangementPhoto)
-        {
-            _logger.LogInformation("No arrangement photo found.");
-        }
-        
         var htmlTemplate = _templateBuilder.GenerateHtmlTemplate(
-            productListing, 
+            item, 
             shouldRenderSpecification, 
-            shouldRenderVideos, 
-            shouldRenderArrangementPhoto
+            shouldRenderVideos
         );
         
-        await SaveHtmlFileToDirectory(productListing.Name, htmlTemplate);
-        _logger.LogSuccess($"Template file for {productListing.Name} generated successfully.");
+        await SaveHtmlFileToDirectory(item.Name, htmlTemplate);
+        _logger.LogSuccess($"Template file for {item.Name} generated successfully.");
     }
 }
