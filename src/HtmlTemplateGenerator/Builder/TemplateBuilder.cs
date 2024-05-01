@@ -1,4 +1,5 @@
-﻿using HtmlTemplateGenerator.Html;
+﻿using Html.Builder;
+using Html.Tags;
 using HtmlTemplateGenerator.Models;
 using HtmlTemplateGenerator.Static;
 

@@ -1,4 +1,4 @@
-﻿namespace HtmlTemplateGenerator.Html;
+﻿namespace Html.Tags;
 
 public static class HtmlTag
 {

@@ -1,6 +1,7 @@
 ﻿using System.Text;
+using Html.Tags;
 
-namespace HtmlTemplateGenerator.Html;
+namespace Html.Builder;
 
 public class HtmlBuilder
 {
@@ -21,7 +22,7 @@ public class HtmlBuilder
 			return;
 		}
 		
-		_indentLevel -- ;
+		_indentLevel-- ;
 	}
     
     private void AppendToHtml(string html)
