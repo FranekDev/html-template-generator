@@ -26,7 +26,8 @@ public class HtmlBuilder
     
     private void AppendToHtml(string html)
     {
-	    var indent = new string('\t', _indentLevel);
+	    var indentSpaces = _indentLevel * 4;
+	    var indent = new string(' ', indentSpaces);
 		_htmlPage.Append($"{indent}{html}\n");
 	}
     
