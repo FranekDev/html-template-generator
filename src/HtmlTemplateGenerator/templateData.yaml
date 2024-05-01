@@ -6,16 +6,16 @@ descriptions:
   - title: title
     text: text
     imageUrl: imageUrl
-    
+
 specification:
-   title: title
-   text: |
-      Key: Value
-      Key: Value
-      
+  title: title
+  text: |
+    Key: Value
+    Key: Value
+
 videos:
   - title: title
     description: description
     url: videoUrl
-    
+
 arrangementPhoto: photoUrl

@@ -1,4 +1,5 @@
-﻿using HtmlTemplateGenerator.Models;
+﻿using HtmlTemplateGenerator.Builder;
+using HtmlTemplateGenerator.Models;
 
 namespace HtmlTemplateGenerator.Services;
 

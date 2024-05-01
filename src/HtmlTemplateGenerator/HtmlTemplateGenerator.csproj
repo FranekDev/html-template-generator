@@ -19,4 +19,8 @@
       <PackageReference Include="YamlDotNet" Version="15.1.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Html.Library\Html.Library.csproj" />
+    </ItemGroup>
+
 </Project>
