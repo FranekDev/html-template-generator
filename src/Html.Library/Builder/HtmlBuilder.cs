@@ -5,21 +5,41 @@ namespace HtmlTemplateGenerator.Html;
 public class HtmlBuilder
 {
     private readonly StringBuilder _htmlPage = new();
+    private int _indentLevel = 0;
     public string ResultHtml => _htmlPage.ToString();
     
-    private void AppendToHtml(string html)
+    private void IncrementIndent()
 	{
-		_htmlPage.Append($"{html}\n");
+	    _indentLevel++;
+	}
+
+	private void DecrementIndent()
+	{
+		if (_indentLevel < 1)
+		{
+			_indentLevel = 0;
+			return;
+		}
+		
+		_indentLevel -- ;
+	}
+    
+    private void AppendToHtml(string html)
+    {
+	    var indent = new string('\t', _indentLevel);
+		_htmlPage.Append($"{indent}{html}\n");
 	}
     
     public HtmlBuilder TableOpen()
 	{
 		AppendToHtml(HtmlTag.TableOpen);
+		IncrementIndent();
 		return this;
 	}
 
 	public HtmlBuilder TableClose()
 	{
+		DecrementIndent();
 		AppendToHtml(HtmlTag.TableClose);
 		return this;
 	}
@@ -27,11 +47,13 @@ public class HtmlBuilder
 	public HtmlBuilder TableBodyOpen()
 	{
 		AppendToHtml(HtmlTag.TableBodyOpen);
+		IncrementIndent();
 		return this;
 	}
 	
 	public HtmlBuilder TableBodyClose()
 	{
+		DecrementIndent();
 		AppendToHtml(HtmlTag.TableBodyClose);
 		return this;
 	}
@@ -39,11 +61,13 @@ public class HtmlBuilder
 	public HtmlBuilder TableRowOpen()
 	{
 		AppendToHtml(HtmlTag.TableRowOpen);
+		IncrementIndent();
 		return this;
 	}
 	
 	public HtmlBuilder TableRowClose()
 	{
+		DecrementIndent();
 		AppendToHtml(HtmlTag.TableRowClose);
 		return this;
 	}
@@ -51,11 +75,13 @@ public class HtmlBuilder
 	public HtmlBuilder TableCellOpen(int colSpan = 1)
 	{
 		AppendToHtml(HtmlTag.TableCellOpen(colSpan));
+		IncrementIndent();
 		return this;
 	}
 	
 	public HtmlBuilder TableCellClose()
 	{
+		DecrementIndent();
 		AppendToHtml(HtmlTag.TableCellClose);
 		return this;
 	}
@@ -87,11 +113,13 @@ public class HtmlBuilder
 	public HtmlBuilder UlOpen()
 	{
 		AppendToHtml(HtmlTag.UlOpen);
+		IncrementIndent();
 		return this;
 	}
 	
 	public HtmlBuilder UlClose()
 	{
+		DecrementIndent();
 		AppendToHtml(HtmlTag.UlClose);
 		return this;
 	}
