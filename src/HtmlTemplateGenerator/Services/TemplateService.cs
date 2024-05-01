@@ -45,10 +45,22 @@ public class TemplateService
             return;
         }
         
+        var shouldRenderBannerImage = item.BannerImageSrc is not null;
+        var shouldRenderHeader = item.Header is not null;
         var shouldRenderSpecification = item.Specification is not null && item.Specification.Items.Any();
         var shouldRenderVideos = item.Videos.Any();
         
         _logger.LogInformation("Generating template file...");
+        
+        if (!shouldRenderBannerImage)
+        {
+            _logger.LogInformation("No banner image found.");
+        }
+        
+        if (!shouldRenderHeader)
+        {
+            _logger.LogInformation("No header found.");
+        }
         
         if (!shouldRenderSpecification)
         {
@@ -62,6 +74,8 @@ public class TemplateService
         
         var htmlTemplate = _templateBuilder.GenerateHtmlTemplate(
             item, 
+            shouldRenderBannerImage,
+            shouldRenderHeader,
             shouldRenderSpecification, 
             shouldRenderVideos
         );

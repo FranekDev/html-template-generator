@@ -8,15 +8,29 @@ public class TemplateBuilder
 {
     public string GenerateHtmlTemplate(
         Item item,
+        bool shouldRenderBannerImage,
+        bool shouldRenderHeader,
         bool shouldRenderSpecification,
         bool shouldRenderVideos
     )
     {
         var html = new TemplateHtmlBuilder()
             .TableBody(table =>
-                table.RenderBannerImage(item.BannerImageSrc)
-                    .RenderHeader("")
-                    .RenderDescriptions(item.Descriptions)
+                {
+                    if (shouldRenderBannerImage)
+                    {
+                        table.RenderBannerImage(item.BannerImageSrc);
+                    }
+                    
+                    if (shouldRenderHeader && item.Header is not null)
+                    {
+                        table.RenderHeader(item.Header);
+                    }
+                    
+                    table.RenderDescriptions(item.Descriptions);
+
+                    return table;
+                }
             );
 
         if (shouldRenderVideos)
@@ -83,7 +97,7 @@ public class TemplateBuilder
             P(description.Text);
             TableCellClose();
         }
-        
+
 
         public void RenderVideos(IEnumerable<Video> videos)
         {

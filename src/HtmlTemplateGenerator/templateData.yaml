@@ -1,16 +1,18 @@
-﻿name: CV
+﻿name: name
+
+header: header
 
 descriptions:
   - title: title
     text: text
   - title: title
     text: text
-    
+
 specification:
   title: title
   text: |
     Key: Value
-    Key: Value
+    Another key: Value
 
 videos:
   - title: title
