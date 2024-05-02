@@ -65,7 +65,7 @@ public class TemplateService
         var shouldRenderHeader = item.Header is not null;
         var shouldRenderDescriptions = item.Descriptions?.Any() ?? false;
         var shouldRenderSpecification = item.Specification is not null && item.Specification.Items.Any();
-        var shouldRenderVideos = item.Videos.Any();
+        var shouldRenderVideos = item.Videos?.Any() ?? false;
         
         _logger.LogInformation("Generating template file...");
         
