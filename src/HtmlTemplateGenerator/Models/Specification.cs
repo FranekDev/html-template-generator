@@ -2,31 +2,35 @@
 
 public record Specification
 {
-    public string Title { get; init; }
-    public string? Text { get; set; }
+    public string? Title { get; init; } = null;
+    public string? Text { get; set; } = null;
     public IEnumerable<SpecificationItem> Items { get; set; } = [];
 
     public IEnumerable<SpecificationItem> GenerateSpecificationItems(string text)
     {
-        var specificationItems = new List<SpecificationItem>();
         if (Text is null)
         {
-            return specificationItems;
+            return [];
         }
         
         var items = text.Split("\n");
+        var specificationItems = new List<SpecificationItem>();
         
         foreach (var item in items)
         {
             var keyValuePair = item.Split(":");
-            if (keyValuePair.Length == 2)
+            if (keyValuePair.Length != 2)
             {
-                specificationItems.Add(new SpecificationItem
-                {
-                    Key = keyValuePair[0].Trim(),
-                    Value = keyValuePair[1].Trim()
-                });
+                continue;
             }
+            
+            var (key, value) = (keyValuePair[0].Trim(), keyValuePair[1].Trim());
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value))
+            {
+                throw new Exception("Specification item is not in the correct format. Please make sure that the key and value are separated by a colon (:) and that there are no leading or trailing spaces.");
+            }
+
+            specificationItems.Add(new SpecificationItem { Key = key, Value = value });
         }
 
         return specificationItems;

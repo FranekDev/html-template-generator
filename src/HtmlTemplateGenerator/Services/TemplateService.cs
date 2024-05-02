@@ -13,10 +13,20 @@ public class TemplateService
     {
         var item = _fileManager.DeserializeYamlFile<Item>(data);
 
-        if (item?.Specification?.Text != null)
+        if (item?.Specification?.Text is null)
+        {
+            return item;
+        }
+        
+        try
         {
             item.Specification.Items =
                 item.Specification.GenerateSpecificationItems(item.Specification.Text);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Failed to generate specification items: {e.Message}");
+            return null;
         }
 
         return item;
@@ -44,9 +54,16 @@ public class TemplateService
             _logger.LogError("Failed to deserialize Yaml data.");
             return;
         }
+
+        if (item.Name is null)
+        {
+            _logger.LogError("Item name is required.");
+            return;
+        }
         
         var shouldRenderBannerImage = item.BannerImageSrc is not null;
         var shouldRenderHeader = item.Header is not null;
+        var shouldRenderDescriptions = item.Descriptions?.Any() ?? false;
         var shouldRenderSpecification = item.Specification is not null && item.Specification.Items.Any();
         var shouldRenderVideos = item.Videos.Any();
         
@@ -60,6 +77,11 @@ public class TemplateService
         if (!shouldRenderHeader)
         {
             _logger.LogInformation("No header found.");
+        }
+        
+        if (!shouldRenderDescriptions)
+        {
+            _logger.LogInformation("No description items found.");
         }
         
         if (!shouldRenderSpecification)
@@ -76,6 +98,7 @@ public class TemplateService
             item, 
             shouldRenderBannerImage,
             shouldRenderHeader,
+            shouldRenderDescriptions,
             shouldRenderSpecification, 
             shouldRenderVideos
         );

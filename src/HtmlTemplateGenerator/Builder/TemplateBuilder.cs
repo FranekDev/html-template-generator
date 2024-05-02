@@ -11,27 +11,14 @@ public class TemplateBuilder
         Item item,
         bool shouldRenderBannerImage,
         bool shouldRenderHeader,
+        bool shouldRenderDescriptions,
         bool shouldRenderSpecification,
         bool shouldRenderVideos
     )
     {
         var html = new TemplateHtmlBuilder()
-            .TableBody(table =>
-                {
-                    if (shouldRenderBannerImage && item.BannerImageSrc is not null)
-                    {
-                        table.RenderBannerImage(item.BannerImageSrc);
-                    }
-                    
-                    if (shouldRenderHeader && item.Header is not null)
-                    {
-                        table.RenderHeader(item.Header);
-                    }
-                    
-                    table.RenderDescriptions(item.Descriptions);
-
-                    return table;
-                }
+            .TableBody(table => 
+                RenderTableBody(table, item, shouldRenderBannerImage, shouldRenderHeader, shouldRenderDescriptions)
             );
 
         if (shouldRenderVideos)
@@ -45,6 +32,32 @@ public class TemplateBuilder
         }
 
         return html.ResultHtml;
+    }
+    
+    private TemplateHtmlBuilder RenderTableBody(
+        TemplateHtmlBuilder table, 
+        Item item, 
+        bool shouldRenderBannerImage,
+        bool shouldRenderHeader,
+        bool shouldRenderDescriptions
+    )
+    {
+        if (shouldRenderBannerImage && item.BannerImageSrc is not null)
+        {
+            table.RenderBannerImage(item.BannerImageSrc);
+        }
+
+        if (shouldRenderHeader && item.Header is not null)
+        {
+            table.RenderHeader(item.Header);
+        }
+
+        if (shouldRenderDescriptions)
+        {
+            table.RenderDescriptions(item.Descriptions);
+        }
+
+        return table;
     }
 
     private class TemplateHtmlBuilder : HtmlBuilder
@@ -94,8 +107,15 @@ public class TemplateBuilder
         private void RenderDescription(Description description)
         {
             TableCellOpen();
-            H2(description.Title);
-            P(description.Text);
+            if (description.Title is not null)
+            {
+                H2(description.Title);
+            }
+
+            if (description.Text is not null)
+            {
+                P(description.Text);
+            }
             TableCellClose();
         }
 
@@ -104,15 +124,30 @@ public class TemplateBuilder
         {
             foreach (var video in videos)
             {
-                H2(video.Title);
-                P(video.Description);
-                P(HtmlTag.Video(video.Url));
+                if (video.Title is not null)
+                {
+                    H2(video.Title);
+                }
+
+                if (video.Description is not null)
+                {
+                    P(video.Description);
+                }
+
+                if (video.Url is not null)
+                {
+                    P(HtmlTag.Video(video.Url));
+                }
             }
         }
 
         public void RenderSpecification(Specification specification)
         {
-            H2($"{specification.Title}:");
+            if (specification.Title is not null)
+            {
+                H2($"{specification.Title}:");
+            }
+
             UlWithLi(specification.Items.MapToDict(), item =>
                 $"{HtmlTag.Strong($"{item.Key}:")} {item.Value}"
             );
