@@ -6,6 +6,37 @@ namespace HtmlTemplateGenerator.Services;
 public class FileManagerService
 {
     private readonly LoggerService _logger = new();
+    private readonly string _yamlTemplate = """
+       name: name
+       
+       header: header
+       
+       bannerImageSrc: bannerImageSrc
+       
+       descriptions:
+         - title: title
+           text: text
+         - title: title
+           text: text
+       
+       specification:
+         title: title
+         text: |
+           Key: Value
+           Another key: Value
+       
+       videos:
+         - title: title
+           description: description
+           url: videoUrl
+       """; 
+
+    public bool CheckIfFileExists(string fileName)
+    {
+        var path = Directory.GetCurrentDirectory();
+        var file = Path.Combine(path, fileName);
+        return File.Exists(file);
+    }
 
     public async Task WriteAndSaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName)
     {
@@ -53,6 +84,8 @@ public class FileManagerService
         catch (Exception e)
         {
             _logger.LogError(e.Message);
+            _logger.LogInformation("Available fields: name, header, bannerImageSrc, descriptions, specification, videos");
+            _logger.LogInformation($"Example: \n{_yamlTemplate}");
             return default;
         }
     }
