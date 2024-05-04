@@ -33,4 +33,13 @@ public class LoggerService
             Console.ReadLine();
         }
     }
+
+    public async Task LogStatus(string message, Func<StatusContext, Task> status)
+    {
+        await AnsiConsole.Status()
+            .StartAsync(message, async ctx =>
+            {
+                await status(ctx);
+            });
+    }
 }

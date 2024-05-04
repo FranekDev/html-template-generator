@@ -72,8 +72,6 @@ public class TemplateService
         var shouldRenderSpecification = ValidateSpecification(item.Specification);
         var shouldRenderVideos = ValidateVideos(item.Videos);
         
-        _logger.LogInformation("Generating template file...");
-        
         var htmlTemplate = _templateBuilder.GenerateHtmlTemplate(
             item, 
             shouldRenderBannerImage,
@@ -83,7 +81,10 @@ public class TemplateService
             shouldRenderVideos
         );
         
-        await SaveHtmlFileToDirectory(item.Name, htmlTemplate);
+        await _logger.LogStatus("Generating template file...", async _ =>
+        {
+            await SaveHtmlFileToDirectory(item.Name, htmlTemplate);
+        });
         _logger.LogSuccess($"Template file for {item.Name} generated successfully.");
         
     }
