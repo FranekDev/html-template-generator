@@ -1,5 +1,6 @@
 ﻿using HtmlTemplateGenerator.Builder;
 using HtmlTemplateGenerator.Models;
+using HtmlTemplateGenerator.Static;
 
 namespace HtmlTemplateGenerator.Services;
 
@@ -20,8 +21,7 @@ public class TemplateService
         
         try
         {
-            item.Specification.Items =
-                item.Specification.GenerateSpecificationItems(item.Specification.Text);
+            item.Specification.Items.GenerateSpecificationItems(item.Specification.Text);
         }
         catch (Exception e)
         {
@@ -39,6 +39,12 @@ public class TemplateService
     
     public async Task GenerateHtmlTemplateFile(string fileName)
     {
+        if (!_fileManager.CheckIfFileExists(fileName))
+        {
+            _logger.LogError($"File {fileName} not found.");
+            return;
+        }
+        
         var data = await _fileManager.ReadFile(fileName);
         
         if (string.IsNullOrEmpty(data))
@@ -48,7 +54,6 @@ public class TemplateService
         }
         
         var item = GetItem(data);
-        
         if (item is null)
         {
             _logger.LogError("Failed to deserialize Yaml data.");
@@ -61,38 +66,13 @@ public class TemplateService
             return;
         }
         
-        var shouldRenderBannerImage = item.BannerImageSrc is not null;
-        var shouldRenderHeader = item.Header is not null;
-        var shouldRenderDescriptions = item.Descriptions?.Any() ?? false;
-        var shouldRenderSpecification = item.Specification is not null && item.Specification.Items.Any();
-        var shouldRenderVideos = item.Videos?.Any() ?? false;
+        var shouldRenderBannerImage = ValidateBannerImage(item.BannerImageSrc);
+        var shouldRenderHeader = ValidateHeader(item.Header);
+        var shouldRenderDescriptions = ValidateDescriptions(item.Descriptions);
+        var shouldRenderSpecification = ValidateSpecification(item.Specification);
+        var shouldRenderVideos = ValidateVideos(item.Videos);
         
         _logger.LogInformation("Generating template file...");
-        
-        if (!shouldRenderBannerImage)
-        {
-            _logger.LogInformation("No banner image found.");
-        }
-        
-        if (!shouldRenderHeader)
-        {
-            _logger.LogInformation("No header found.");
-        }
-        
-        if (!shouldRenderDescriptions)
-        {
-            _logger.LogInformation("No description items found.");
-        }
-        
-        if (!shouldRenderSpecification)
-        {
-            _logger.LogInformation("No specification items found.");
-        }
-        
-        if (!shouldRenderVideos)
-        {
-            _logger.LogInformation("No videos found.");
-        }
         
         var htmlTemplate = _templateBuilder.GenerateHtmlTemplate(
             item, 
@@ -105,5 +85,61 @@ public class TemplateService
         
         await SaveHtmlFileToDirectory(item.Name, htmlTemplate);
         _logger.LogSuccess($"Template file for {item.Name} generated successfully.");
+        
+    }
+    
+    private bool ValidateBannerImage(string? bannerImageSrc)
+    {
+        if (bannerImageSrc is not null)
+        {
+            return true;
+        }
+        
+        _logger.LogInformation("No banner image found.");
+        return false;
+    }
+
+    private bool ValidateHeader(string? header)
+    {
+        if (header is not null)
+        {
+            return true;
+        }
+        
+        _logger.LogInformation("No header found.");
+        return false;
+    }
+
+    private bool ValidateDescriptions(IEnumerable<Description> descriptions)
+    {
+        if (descriptions?.Any() is true)
+        {
+            return true;
+        }
+        
+        _logger.LogInformation("No description items found.");
+        return false;
+    }
+ 
+    private bool ValidateSpecification(Specification? specification)
+    {
+        if (specification is not null && specification.Items.Count > 0)
+        {
+            return true;
+        }
+        
+        _logger.LogInformation("No specification items found.");
+        return false;
+    }
+
+    private bool ValidateVideos(IEnumerable<Video> videos)
+    {
+        if (videos?.Any() is true)
+        {
+            return true;
+        }
+        
+        _logger.LogInformation("No videos found.");
+        return false;
     }
 }
