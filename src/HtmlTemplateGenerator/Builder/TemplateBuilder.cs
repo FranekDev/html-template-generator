@@ -9,24 +9,20 @@ public class TemplateBuilder
 {
     public string GenerateHtmlTemplate(
         Item item,
-        bool shouldRenderBannerImage,
-        bool shouldRenderHeader,
-        bool shouldRenderDescriptions,
-        bool shouldRenderSpecification,
-        bool shouldRenderVideos
+        RenderFlags renderFlags
     )
     {
         var html = new TemplateHtmlBuilder()
             .TableBody(table => 
-                RenderTableBody(table, item, shouldRenderBannerImage, shouldRenderHeader, shouldRenderDescriptions)
+                RenderTableBody(table, item, renderFlags.ShouldRenderBannerImage, renderFlags.ShouldRenderHeader, renderFlags.ShouldRenderDescriptions)
             );
 
-        if (shouldRenderVideos)
+        if (renderFlags.ShouldRenderVideos)
         {
             html.RenderVideos(item.Videos);
         }
 
-        if (shouldRenderSpecification && item.Specification is not null)
+        if (renderFlags.ShouldRenderSpecification && item.Specification is not null)
         {
             html.RenderSpecification(item.Specification);
         }

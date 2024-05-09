@@ -10,7 +10,7 @@ public static class HtmlTag
     public static string TableRowClose => "</tr>";
     public static string TableCellOpen(int colSpan = 1) => $"<td colspan=\"{colSpan}\">";
     public static string TableCellClose => "</td>";
-    public static string Img(string src, string alt = "") => $"<img src=\"{src}\" alt=\"{alt}\" />";
+    public static string Img(string src, string alt = "", string? style = null) => $"""<img src="{src}" alt="{alt}"{(style is not null ? $" style=\"{style}\"" : "")} />""";
     public static string H2(string text) => $"<h2>{text}</h2>";
     public static string H3(string text) => $"<h3>{text}</h3>";
     public static string P(string text) => $"<p>{text}</p>";

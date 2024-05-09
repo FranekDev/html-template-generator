@@ -1,8 +1,9 @@
-﻿using Spectre.Console;
+﻿using HtmlTemplateGenerator.Services.Interfaces;
+using Spectre.Console;
 
 namespace HtmlTemplateGenerator.Services;
 
-public class LoggerService
+public class LoggerService : ILoggerService
 {
     public void LogInformation(string message, bool addReadLine = false)
     {

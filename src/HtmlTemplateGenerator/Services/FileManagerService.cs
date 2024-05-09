@@ -1,11 +1,12 @@
-﻿using YamlDotNet.Serialization;
+﻿using HtmlTemplateGenerator.Services.Interfaces;
+using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace HtmlTemplateGenerator.Services;
 
-public class FileManagerService
+public class FileManagerService : IFileManagerService
 {
-    private readonly LoggerService _logger = new();
+    private readonly ILoggerService _logger = new LoggerService();
     private readonly string _yamlTemplate = """
        name: name
        
@@ -35,7 +36,14 @@ public class FileManagerService
     {
         var path = Directory.GetCurrentDirectory();
         var file = Path.Combine(path, fileName);
-        return File.Exists(file);
+
+        if (File.Exists(file))
+        {
+            return true;
+        }
+        
+        _logger.LogError($"File {fileName} not found.");
+        return false;
     }
 
     public async Task WriteAndSaveHtmlFileToDirectory(string fileName, string htmlPage, string directoryName)
@@ -58,7 +66,7 @@ public class FileManagerService
         }
     }
 
-    private string CreateDirectory(string directoryName)
+    public string CreateDirectory(string directoryName)
     {
         var path = Directory.GetCurrentDirectory();
         directoryName = Path.Combine(path, directoryName);
@@ -90,8 +98,18 @@ public class FileManagerService
         }
     }
 
-    public async Task<string> ReadFile(string fileName)
+    public async Task<string?> ReadFile(string fileName)
     {
-        return await File.ReadAllTextAsync(fileName);
+        var data = await File.ReadAllTextAsync(fileName);
+
+        if (!string.IsNullOrEmpty(data))
+        {
+            return data;
+        }
+        
+        _logger.LogError("Failed to read Yaml file. File may be empty.");
+        _logger.LogInformation($"Please provide data in the file. Example: \n{_yamlTemplate}");
+
+        return null;
     }
 }

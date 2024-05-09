@@ -1,20 +1,21 @@
 ﻿using System.Text;
+using Html.Builder.Interfaces;
 using Html.Tags;
 
 namespace Html.Builder;
 
-public class HtmlBuilder
+public class HtmlBuilder : IHtmlBuilder
 {
     private readonly StringBuilder _htmlPage = new();
     private int _indentLevel = 0;
     public string ResultHtml => _htmlPage.ToString();
     
-    private void IncrementIndent()
+    public void IncrementIndent()
 	{
 	    _indentLevel++;
 	}
 
-	private void DecrementIndent()
+	public void DecrementIndent()
 	{
 		if (_indentLevel < 1)
 		{
@@ -25,126 +26,126 @@ public class HtmlBuilder
 		_indentLevel-- ;
 	}
     
-    private void AppendToHtml(string html)
+    public void AppendToHtml(string html)
     {
 	    var indentSpaces = _indentLevel * 4;
 	    var indent = new string(' ', indentSpaces);
 		_htmlPage.Append($"{indent}{html}\n");
 	}
     
-    public HtmlBuilder TableOpen()
+    public IHtmlBuilder TableOpen()
 	{
 		AppendToHtml(HtmlTag.TableOpen);
 		IncrementIndent();
 		return this;
 	}
 
-	public HtmlBuilder TableClose()
+	public IHtmlBuilder TableClose()
 	{
 		DecrementIndent();
 		AppendToHtml(HtmlTag.TableClose);
 		return this;
 	}
 	
-	public HtmlBuilder TableBodyOpen()
+	public IHtmlBuilder TableBodyOpen()
 	{
 		AppendToHtml(HtmlTag.TableBodyOpen);
 		IncrementIndent();
 		return this;
 	}
 	
-	public HtmlBuilder TableBodyClose()
+	public IHtmlBuilder TableBodyClose()
 	{
 		DecrementIndent();
 		AppendToHtml(HtmlTag.TableBodyClose);
 		return this;
 	}
 	
-	public HtmlBuilder TableRowOpen()
+	public IHtmlBuilder TableRowOpen()
 	{
 		AppendToHtml(HtmlTag.TableRowOpen);
 		IncrementIndent();
 		return this;
 	}
 	
-	public HtmlBuilder TableRowClose()
+	public IHtmlBuilder TableRowClose()
 	{
 		DecrementIndent();
 		AppendToHtml(HtmlTag.TableRowClose);
 		return this;
 	}
 	
-	public HtmlBuilder TableCellOpen(int colSpan = 1)
+	public IHtmlBuilder TableCellOpen(int colSpan = 1)
 	{
 		AppendToHtml(HtmlTag.TableCellOpen(colSpan));
 		IncrementIndent();
 		return this;
 	}
 	
-	public HtmlBuilder TableCellClose()
+	public IHtmlBuilder TableCellClose()
 	{
 		DecrementIndent();
 		AppendToHtml(HtmlTag.TableCellClose);
 		return this;
 	}
 	
-	public HtmlBuilder Img(string src, string alt = "")
+	public IHtmlBuilder Img(string src, string alt = "", string? style = null)
 	{
-		AppendToHtml(HtmlTag.Img(src, alt));
+		AppendToHtml(HtmlTag.Img(src, alt, style));
 		return this;
 	}
 	
-	public HtmlBuilder H2(string text)
+	public IHtmlBuilder H2(string text)
 	{
 		AppendToHtml(HtmlTag.H2(text));
 		return this;
 	}
 	
-	public HtmlBuilder H3(string text)
+	public IHtmlBuilder H3(string text)
 	{
 		AppendToHtml(HtmlTag.H3(text));
 		return this;
 	}
 	
-	public HtmlBuilder P(string text)
+	public IHtmlBuilder P(string text)
 	{
 		AppendToHtml(HtmlTag.P(text));
 		return this;
 	}
 	
-	public HtmlBuilder UlOpen()
+	public IHtmlBuilder UlOpen()
 	{
 		AppendToHtml(HtmlTag.UlOpen);
 		IncrementIndent();
 		return this;
 	}
 	
-	public HtmlBuilder UlClose()
+	public IHtmlBuilder UlClose()
 	{
 		DecrementIndent();
 		AppendToHtml(HtmlTag.UlClose);
 		return this;
 	}
 	
-	public HtmlBuilder Li(string text)
+	public IHtmlBuilder Li(string text)
 	{
 		AppendToHtml(HtmlTag.Li(text));
 		return this;
 	}
 	
-	public HtmlBuilder Strong(string text)
+	public IHtmlBuilder Strong(string text)
 	{
 		AppendToHtml(HtmlTag.Strong(text));
 		return this;
 	}
 	
-	public HtmlBuilder Video(string src)
+	public IHtmlBuilder Video(string src)
 	{
 		AppendToHtml(HtmlTag.Video(src));
 		return this;
 	}
 	
-	public HtmlBuilder UlWithLi(Dictionary<string, string> items, Func<KeyValuePair<string, string>, string> itemTemplate)
+	public IHtmlBuilder UlWithLi(Dictionary<string, string> items, Func<KeyValuePair<string, string>, string> itemTemplate)
 	{
 		UlOpen();
 		foreach (var item in items)
